@@ -2,6 +2,7 @@
 import { state, getPath } from './store.js';
 import { esc, euro, num, fmtNum, fmtDate, download, safeName, toast } from './ui.js';
 import { icon } from './icons.js';
+import { buildPdf } from './pdf.js';
 
 export const DEFAULT_LOGO = '../assets/img/logo-dark.png';
 export const logoHeight = (size) => Math.round(28 + (Number(size ?? 50) / 100) * 82);
@@ -166,61 +167,23 @@ export function contractPaper(k, edit = false) {
 }
 
 // ---------- PDF ----------
-let pdfLib = null;
-function loadPdfLib() {
-  if (window.html2pdf) return Promise.resolve(window.html2pdf);
-  if (!pdfLib) {
-    pdfLib = new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = new URL('../vendor/html2pdf.bundle.min.js', import.meta.url).href;
-      s.onload = () => resolve(window.html2pdf);
-      s.onerror = () => { pdfLib = null; reject(new Error('PDF-Modul konnte nicht geladen werden')); };
-      document.head.appendChild(s);
-    });
-  }
-  return pdfLib;
-}
-
-export async function makePdf(paperHTML) {
-  const html2pdf = await loadPdfLib();
-  const host = document.createElement('div');
-  host.style.cssText = 'position:absolute;left:0;top:0;width:794px;background:#fff;z-index:-1;pointer-events:none';
-  host.innerHTML = paperHTML;
-  const el = host.firstElementChild;
-  el.classList.add('pdf');
-  el.classList.remove('editing');
-  el.style.padding = '0 56px';
-  document.body.appendChild(host);
-  try {
-    await Promise.all([...el.querySelectorAll('img')].map((img) => (img.complete ? null : new Promise((r) => { img.onload = img.onerror = r; }))));
-    await document.fonts.ready;
-    return await html2pdf().set({
-      margin: [14, 0, 16, 0],
-      image: { type: 'jpeg', quality: 0.96 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, windowWidth: 794 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css'], avoid: ['.p-para', '.p-sec-h', 'tr', '.p-signs', '.p-head', '.p-sum', '.p-foot', '.p-parties', '.p-meta-row', '.p-text', '.p-sign-date'] },
-    }).from(el).outputPdf('blob');
-  } finally {
-    host.remove();
-  }
-}
+export const makePdf = (paperHTML, name) => buildPdf(paperHTML, name);
 
 export async function savePdf(paperHTML, name) {
   toast('PDF wird erstellt …');
   try {
-    const blob = await makePdf(paperHTML);
+    const blob = await makePdf(paperHTML, name);
     download(blob, `${safeName(name)}.pdf`);
   } catch (e) {
     console.error(e);
-    toast('PDF konnte nicht erstellt werden – nutze „Drucken“ → „Als PDF sichern“.', 'error');
+    toast('PDF konnte nicht erstellt werden. Bitte die Seite neu laden und nochmal versuchen.', 'error');
   }
 }
 
 export async function sharePdf(paperHTML, name) {
   toast('PDF wird erstellt …');
   try {
-    const blob = await makePdf(paperHTML);
+    const blob = await makePdf(paperHTML, name);
     const file = new File([blob], `${safeName(name)}.pdf`, { type: 'application/pdf' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], title: name });
