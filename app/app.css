@@ -718,6 +718,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .paper { box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; max-width: none !important; font-size: 10.5pt; }
   .paper .ce { background: none !important; box-shadow: none !important; }
   .p-tools, .p-para-x { display: none !important; }
+  .paper[data-paper="doc"] { padding-bottom: 34mm !important; }
+  .paper[data-paper="doc"] .p-foot { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; background: #fff; }
 }
 
 /* PDF-Export: feste A4-Breite */

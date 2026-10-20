@@ -57,7 +57,7 @@ Unter `/app/` liegt die Büro-App (z. B. `https://<benutzername>.github.io/Websi
 
 Alle Daten bleiben **auf dem jeweiligen Gerät** (Browser-Speicher). Unter *Firma → Datensicherung* lässt sich eine Sicherungsdatei speichern und auf einem anderen Gerät wieder laden. Die Anmeldung schützt die App nur auf diesem Gerät.
 
-PDF-Erzeugung: [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) (MIT, `app/vendor/`).
+PDF-Erzeugung: [jsPDF](https://github.com/parallax/jsPDF) (MIT, `app/vendor/`), Schriften Figtree und Outfit als TTF (SIL OFL).
 
 ## Lizenzen
 
