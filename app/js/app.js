@@ -6,6 +6,7 @@ import { DOC_TYPES, UNITS, totals, customerBlock, isOverdue, docPaper, contractP
 
 const app = document.getElementById('app');
 const MAX_FILE = 50 * 1024 * 1024;
+const VERSION = '1.2';
 
 // ---------- Erstbefüllung ----------
 if (!state.seeded.contract) {
@@ -129,7 +130,7 @@ function shell() {
     <aside class="side">
       <div class="brand"><div class="brand-mark">${icon('hat')}</div><div>Baulot<small>${esc(state.company.name)}</small></div></div>
       <nav class="side-nav">${NAV.map((n) => `<a class="side-link" data-nav="${n.r}" href="#/${n.r}">${icon(n.i)}${n.l}</a>`).join('')}</nav>
-      <div class="side-foot">Daten lokal auf diesem Gerät</div>
+      <div class="side-foot">Daten lokal auf diesem Gerät · Version ${VERSION}</div>
     </aside>
     <main class="main" id="view"></main>
     <nav class="tabbar">
@@ -1299,7 +1300,7 @@ VIEWS.firma = () => {
     <div class="card-head"><div><h3>Konto</h3><p>${esc(acc?.email || '')}</p></div></div>
     <button class="btn" data-action="logout">${icon('logout')}Abmelden</button>
   </div>
-  <p class="hint" style="text-align:center;margin-top:20px">Baulot · Büro-App für ${esc(c.name)}</p>`;
+  <p class="hint" style="text-align:center;margin-top:20px">Baulot · Büro-App für ${esc(c.name)} · Version ${VERSION}</p>`;
 };
 
 async function resizeImage(file, max = 700) {
@@ -1713,9 +1714,19 @@ document.addEventListener('keydown', (e) => {
 const mo = new MutationObserver(() => { const v = document.getElementById('view'); if (v && v.querySelector('audio[data-audio]:not([src])')) hydrateAudio(v); });
 mo.observe(app, { childList: true, subtree: true });
 
-// Offline-Fähigkeit
+// Offline-Fähigkeit. Sobald eine neue Version übernommen wurde, einmal neu laden.
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloading) return;
+    reloading = true;
+    location.reload();
+  });
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((reg) => {
+    reg.update().catch(() => {});
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
+  }).catch(() => {});
 }
 
 render();
