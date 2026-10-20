@@ -44,6 +44,21 @@ python3 -m http.server 8000
 
 Dann im Browser `http://localhost:8000` öffnen.
 
+## Büro-App „Baulot“ (`app/`)
+
+Unter `/app/` liegt die Büro-App (z. B. `https://<benutzername>.github.io/Website/app/`). Auf dem iPhone in Safari öffnen → Teilen → **„Zum Home-Bildschirm“**, dann startet sie wie eine normale App.
+
+- **Übersicht** – offene Angebote, offene Rechnungen, aktive Baustellen, offene Mängel, nächste Termine
+- **Dokumente** – Kostenvoranschläge und Rechnungen mit Positionen, MwSt., Rabatt, PDF, Drucken, Teilen und E-Rechnung (XRechnung-XML); Kostenvoranschlag mit einem Klick in eine Rechnung umwandeln
+- **Verträge** – Arbeitsvertrag, Subunternehmervertrag, Bauvertrag mit Kunden. **Jeder Text ist bearbeitbar**: „Bearbeiten“ antippen und direkt im Dokument tippen (Titel, Parteien, jeder Paragraf und Absatz, Ort/Datum, Unterschriften). Paragrafen/Absätze lassen sich hinzufügen, verschieben und löschen.
+- **Ablage** – Fotos und PDFs hochladen, nach Art sortieren
+- **Baustellen** – Fotos, Sprachnachrichten, Mängelliste, Notizen
+- **Kunden**, **Termine** (Wochenkalender mit Verschieben per Finger), **Textvorlagen**, **Firma** (Logo, Stammdaten, Bank, Fußzeile, Datensicherung)
+
+Alle Daten bleiben **auf dem jeweiligen Gerät** (Browser-Speicher). Unter *Firma → Datensicherung* lässt sich eine Sicherungsdatei speichern und auf einem anderen Gerät wieder laden. Die Anmeldung schützt die App nur auf diesem Gerät.
+
+PDF-Erzeugung: [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) (MIT, `app/vendor/`).
+
 ## Lizenzen
 
 Schriften Outfit und Figtree: SIL Open Font License (siehe `assets/fonts/`). Icons im Stil von Lucide (ISC/MIT).
